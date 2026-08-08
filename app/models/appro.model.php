@@ -57,35 +57,6 @@ function getApprosValide(): array
 
     return $appros;
 }
-function getApproAValide(): array
-{
-
-    $pdo = connexionDB();
-
-    $sql = "SELECT a.id, a.dateAppro, a.refBL, f.nomEntrprise, a.etatAppro_id,
-            SUM(la.quantiteRecu *la.prixAppro) as valeurFacture,
-            SUM(la.quantiteAppro *la.prixAppro) as prixDemande,
-            a.etatAppro_id , ea.nomEtat
-            FROM approvisionnements a
-            INNER JOIN fournisseurs f ON a.fournisseur_id = f.id
-            INNER JOIN ligneAppro la ON la.appro_id = a.id
-            INNER JOIN etatAppro ea ON ea.id = a.etatappro_id
-            GROUP BY a.id, a.dateappro, a.refBL, f.nomentrprise, a.etatAppro_id, ea.nomEtat;";
-
-    $appros = query($pdo, $sql, false);
-
-    $sql1 = "SELECT ar.libelle, la.article_id, la.quantiteRecu ,la.prixAppro, la.quantiteAppro
-            FROM ligneAppro la 
-            INNER JOIN articles ar ON la.article_id = ar.id
-            INNER JOIN approvisionnements a ON la.appro_id = a.id
-            WHERE  a.id = :appro_id";
-
-    foreach ($appros as &$appro) {
-        $appro['articles'] = executeQuery($pdo, $sql1, ["appro_id" => $appro['id']], false);
-    }
-
-    return $appros;
-}
 
 function confirmerReceptionAppro(array $newAppro): int
 {

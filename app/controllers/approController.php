@@ -36,7 +36,7 @@ function dashboard()
         redirectToRoute("appro.html.php");
         exit;
     }
-    $approsAValide = getData("newAppro") ?? [];
+    // $approsAValide = getData("newAppro") ?? []; 
 
     renderView('appro',['appros' => $appros,'articlesEnRupture' => $articlesEnRupture,'approsValide' => $approsValide,'approsAValide' => $approsAValide]);
 }
