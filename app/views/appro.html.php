@@ -3,9 +3,12 @@ $appros = $viewData['appros'] ?? [];
 $articlesEnRupture = $viewData['articlesEnRupture'] ?? [];
 $approsValide = $viewData['approsValide'] ?? [];
 $approsAValide = $viewData['approsAValide'] ?? [];
+$fournisseurs = $viewData['fournisseurs'] ?? [];
+$articlesParFournisseur = $viewData["articlesParFournisseur"] ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +16,7 @@ $approsAValide = $viewData['approsAValide'] ?? [];
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php asset("css/appro.css") ?>">
 </head>
+
 <body>
     <div class="app-container">
         <!-- ========================================================= NAVBAR ========================================================== -->
@@ -50,7 +54,6 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                     </div>
                     <form id="supply-mock-form" method="POST" action="">
                         <input type="hidden" name="action" value="enregistrer">
-                        <input type="hidden" name="fournisseur_id" id="fournisseur-id">
                         <input type="hidden" name="refBL" id="refbl-hidden">
                         <input type="hidden" name="articles" id="articles-hidden">
                         <!-- FOURNISSEUR -->
@@ -58,17 +61,15 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                             <label for="supplier-select">
                                 Fournisseur Partenaire
                             </label>
-                            <select id="supplier-select" class="form-control" style="width:100%;">
-                                <option value="3">
-                                    Comptoir Céréalier Sénégalais (CCS)
-                                </option>
-                                <option value="4">
-                                    Grossiste Alimentaire Diop & Frères
-                                </option>
-                                <option value="5">
-                                    SODIDA Distributeurs Réunis
-                                </option>
-                            </select>
+                            <form method="GET">
+                                <select name="fournisseur_id" id="supplier-select" class="form-control" style="width:100%;" >
+                                    <?php foreach ($fournisseurs as $fournisseur): ?>
+                                        <option value="<?= $fournisseur['id'] ?>">
+                                            <?= $fournisseur['nomentreprise'] ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                </select>
+                            </form>
                         </div>
                         <!-- ARTICLES -->
                         <div style=" border-top:1px dashed var(--border-color); padding-top:16px; margin-top:16px; margin-bottom:16px; ">
@@ -80,23 +81,12 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                                     <label for="pos-item-select">
                                         Article
                                     </label>
-                                    <select id="pos-item-select" class="form-control">
-                                        <option value="1" data-name="Sac de riz 50kg" data-price="21000">
-                                            Sac de riz 50kg
-                                            (Coût d'achat : 21 000 F)
+                                    <select id="pos-item-select" name="article_id" class="form-control">
+                                    <?php foreach ($articlesParFournisseur as $article): ?>
+                                        <option value="<?= $article['id'] ?> " data-name="<?= $article['libelle'] ?> " data-price="<?= $article['prixachat'] ?> ">
+                                            <?= $article['libelle'] ?> (Coût d'achat : <?= $article['qtestock'] ?> F)
                                         </option>
-                                        <option value="2" data-name="Bidon d'huile 5L" data-price="6500">
-                                            Bidon d'huile 5L
-                                            (Coût d'achat : 6 500 F)
-                                        </option>
-                                        <option value="3" data-name="Carton de savon" data-price="9500">
-                                            Carton de savon
-                                            (Coût d'achat : 9 500 F)
-                                        </option>
-                                        <option value="4" data-name="Paquet de sucre 1kg" data-price="1200">
-                                            Paquet de sucre 1kg
-                                            (Coût d'achat : 1 200 F)
-                                        </option>
+                                    <?php endforeach ?>
                                     </select>
                                 </div>
                                 <div class="form-group" style="margin-bottom:0;">
@@ -267,14 +257,14 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                             </div>
                         <?php endforeach; ?>
                         <?php foreach ($approsValide as $appro): ?>
-                            <div class="panel-card slip-card" data-supplier="<?= htmlspecialchars($appro['nomentrprise'] ?? '') ?>" data-ref="<?= htmlspecialchars($appro['refbl'] ?? '') ?>" data-status="receptionne" style=" padding:20px; border-radius:16px; margin-bottom:16px; background:rgba(255,255,255,0.01); ">
+                            <div class="panel-card slip-card" data-supplier="<?= htmlspecialchars($appro['nomentreprise'] ?? '') ?>" data-ref="<?= htmlspecialchars($appro['refbl'] ?? '') ?>" data-status="receptionne" style=" padding:20px; border-radius:16px; margin-bottom:16px; background:rgba(255,255,255,0.01); ">
                                 <div style=" display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; ">
                                     <div>
                                         <span style=" font-size:11px; color:var(--text-muted); font-weight:700; ">
                                             Réf:#<?= htmlspecialchars($appro['refbl'] ?? '') ?>|<?= htmlspecialchars($appro['dateappro'] ?? '') ?>
                                         </span>
                                         <div style=" font-size:16px; font-weight:700; margin-top:5px; ">
-                                            <?= htmlspecialchars($appro['nomentrprise'] ?? '') ?>
+                                            <?= htmlspecialchars($appro['nomentreprise'] ?? '') ?>
                                         </div>
                                     </div>
                                     <span class="badge payee" id="status-<?= $appro['id'] ?>">
@@ -319,7 +309,7 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                                         <div style=" font-weight:700; font-size:13px; "> <?= htmlspecialchars($article['libelle']) ?> </div>
                                         <span style=" font-size:11px; color:var(--<?= htmlspecialchars($article['couleur']) ?>); font-weight:700; "> <?= htmlspecialchars($article['qtestock']) ?> </span>
                                     </div>
-                                    <button class="btn-quick-action" onclick=" toggleOrderDraft( 'draft-<?= $article['id'] ?>', '<?= htmlspecialchars($article['libelle'], ENT_QUOTES) ?>', '<?= htmlspecialchars($article['nomentrprise'], ENT_QUOTES) ?>', 50 ) "> Commander </button>
+                                    <button class="btn-quick-action" onclick=" toggleOrderDraft( 'draft-<?= $article['id'] ?>', '<?= htmlspecialchars($article['libelle'], ENT_QUOTES) ?>', '<?= htmlspecialchars($article['nomentreprise'], ENT_QUOTES) ?>', 50 ) "> Commander </button>
                                 </div>
                                 <!-- BON DE COMMANDE -->
                                 <div class="order-draft-panel" id="draft-<?= $article['id'] ?>" style="display:none; margin-top:10px;">
@@ -350,7 +340,7 @@ $approsAValide = $viewData['approsAValide'] ?? [];
                             <?php foreach ($appros as $appro): ?>
                                 <tr>
                                     <td style="font-weight:700;"> #<?= htmlspecialchars($appro['refbl']) ?> </td>
-                                    <td> <?= htmlspecialchars($appro['nomentrprise']) ?> </td>
+                                    <td> <?= htmlspecialchars($appro['nomentreprise']) ?> </td>
                                     <td> <?= htmlspecialchars($appro['valeurfacture']) ?> FCFA </td>
                                     <td> <?= htmlspecialchars($appro['valeurreceptionne']) ?> FCFA </td>
                                     <td style=" color:var(--<?= htmlspecialchars($appro['couleur']) ?>); font-weight:700; "> <?= htmlspecialchars($appro['typee']) ?> </td>
@@ -364,4 +354,5 @@ $approsAValide = $viewData['approsAValide'] ?? [];
     </div>
     <script src="<?php asset("js/appro.js") ?>"></script>
 </body>
+
 </html>

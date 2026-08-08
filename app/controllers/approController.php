@@ -8,7 +8,14 @@ function dashboard()
 {
     $appros = getAllAppros();
     $articlesEnRupture = getAllArticlesEnRupture();
+
     $approsValide = getApprosValide();
+
+    $fournisseurs = getAllFournisseurs();
+
+    $fournisseur_id = (int)$_GET["fournisseur_id"];
+    $articlesParFournisseur= getAllArticlesByFournisseurId($fournisseur_id);
+
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -36,7 +43,13 @@ function dashboard()
         redirectToRoute("appro.html.php");
         exit;
     }
-    // $approsAValide = getData("newAppro") ?? []; 
+    // $approsAValide = getData("newAppro") ?? [];
 
-    renderView('appro',['appros' => $appros,'articlesEnRupture' => $articlesEnRupture,'approsValide' => $approsValide,'approsAValide' => $approsAValide]);
+    renderView('appro', ['appros' => $appros,
+    'articlesEnRupture' => $articlesEnRupture,
+    'approsValide' => $approsValide,
+    // 'approsAValide' => $approsAValide,
+    'fournisseurs'=> $fournisseurs,
+    'articlesParFournisseur'=>$articlesParFournisseur
+    ]);
 }

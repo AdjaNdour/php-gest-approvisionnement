@@ -4,7 +4,7 @@ function getAllAppros(): array
 {
     $pdo = connexionDB();
 
-    $sql = "SELECT a.id, a.refBL, f.nomentrprise, a.etatAppro_id, ea.nomEtat,
+    $sql = "SELECT a.id, a.refBL, f.nomEntreprise, a.etatAppro_id, ea.nomEtat,
     SUM(la.quantiteRecu *la.prixAppro) as valeurFacture,
     SUM(la.quantiteAppro *la.prixAppro) as valeurReceptionne,
     CASE
@@ -22,7 +22,7 @@ function getAllAppros(): array
     INNER JOIN fournisseurs f ON a.fournisseur_id = f.id
     INNER JOIN ligneAppro la ON la.appro_id = a.id
     INNER JOIN etatAppro ea ON a.etatAppro_id = ea.id
-    GROUP BY a.id, a.refBL, f.nomentrprise, a.etatAppro_id, ea.nomEtat";
+    GROUP BY a.id, a.refBL, f.nomEntreprise, a.etatAppro_id, ea.nomEtat";
 
     $appros = query($pdo, $sql, false);
 
@@ -33,7 +33,7 @@ function getApprosValide(): array
 {
     $pdo = connexionDB();
 
-    $sql = "SELECT a.id, a.dateAppro, a.refBL, f.nomEntrprise, a.etatAppro_id,
+    $sql = "SELECT a.id, a.dateAppro, a.refBL, f.nomEntreprise, a.etatAppro_id,
             SUM(la.quantiteRecu *la.prixAppro) as valeurFacture,
             SUM(la.quantiteAppro *la.prixAppro) as prixDemande,
             a.etatAppro_id , ea.nomEtat
@@ -41,7 +41,7 @@ function getApprosValide(): array
             INNER JOIN fournisseurs f ON a.fournisseur_id = f.id
             INNER JOIN ligneAppro la ON la.appro_id = a.id
             INNER JOIN etatAppro ea ON ea.id = a.etatappro_id
-            GROUP BY a.id, a.dateappro, a.refBL, f.nomentrprise, a.etatAppro_id, ea.nomEtat;";
+            GROUP BY a.id, a.dateappro, a.refBL, f.nomEntreprise, a.etatAppro_id, ea.nomEtat;";
 
     $appros = query($pdo, $sql, false);
 

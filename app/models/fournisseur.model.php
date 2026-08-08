@@ -3,7 +3,7 @@
 function getAllFournisseurs(): array
 {
     $pdo = connexionDB();
-    $sql = "";
+    $sql = "SELECT nomEntreprise FROM fournisseurs;";
     $data = query($pdo, $sql, false);
     return $data;
 }
